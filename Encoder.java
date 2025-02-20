@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Encoder {
     private static final String WORD_LIST_PATH = "google-10000-english-usa-no-swears-long.txt"; // Yeni kelime listesi
@@ -33,27 +35,22 @@ public class Encoder {
     }
 
     private static String findMatchingWord(int targetOrder, List<String> wordList) {
-        String bestMatch = null;
-        int minDifference = Integer.MAX_VALUE;
-        int minLength = Integer.MAX_VALUE;
-
+        List<String> matchingWords = new ArrayList<>();
+        Random random = new Random();
+    
+        // Hedef değere tam eşleşen kelimeleri topla
         for (String word : wordList) {
-            int wordValue = getWordSumMod26(word);
-            int difference = Math.abs(wordValue - targetOrder);
-
-            if (wordValue == targetOrder && word.length() >= 4) { 
-                if (word.length() < minLength) { 
-                    minDifference = difference;
-                    bestMatch = word;
-                    minLength = word.length();
-                }
-            } else if (difference < minDifference && word.length() >= 4) { 
-                minDifference = difference;
-                bestMatch = word;
-                minLength = word.length();
+            if (getWordSumMod26(word) == (targetOrder % 26) && word.length() >= 4) {
+                matchingWords.add(word);
             }
         }
-        return bestMatch;
+    
+        // Eğer uygun kelimeler varsa rastgele birini seç
+        if (!matchingWords.isEmpty()) {
+            return matchingWords.get(random.nextInt(matchingWords.size()));
+        }
+    
+        return null; // Eşleşen kelime bulunamazsa
     }
 
     public static void main(String[] args) {
