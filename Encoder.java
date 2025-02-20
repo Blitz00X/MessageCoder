@@ -2,44 +2,47 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.imageio.IIOException;
-
-
 public class Encoder {
-    
 
-    public int[] StringtoAscii(String filePath){
+    public int[] StringToAscii(String pathFile) {
         try {
-            //Read text from file
-            String text = new String(Files.readAllBytes(Paths.get(filePath)));
-            //Only gets chars from the text and turn it into char array
-            String onlyChar = text.replaceAll("[^a-zA-ZçÇğĞıİöÖşŞüÜ]", "");
-            //Turn chars into ascii
-            int[] asciiValues = new int[onlyChar.length()];
-            for(int i =0;i < onlyChar.length();i++){
-                asciiValues[i] = (int) onlyChar.charAt(i);
+            
+            String text = new String(Files.readAllBytes(Paths.get(pathFile)));
+
+            
+            String onlyChars = text.replaceAll("[^a-zA-ZçÇğĞıİöÖşŞüÜ]", "");
+
+           
+            int[] alphabeticOrder = new int[onlyChars.length()];
+            for (int i = 0; i < onlyChars.length(); i++) {
+                char ch = onlyChars.charAt(i);
+                
+                if (ch >= 'a' && ch <= 'z') {
+                    alphabeticOrder[i] = ch - 96; 
+                } else if (ch >= 'A' && ch <= 'Z') {
+                    alphabeticOrder[i] = ch - 64; 
+                } else {
+                    alphabeticOrder[i] = 0; // Türkçe karakterler için özel bir işlem gerekebilir
+                }
             }
-            return asciiValues;
 
-
-        }catch(IOException e){
-            System.out.println("Error: "+ e.getMessage());
-            return new int[0];
+            return alphabeticOrder;
+        } catch (IOException e) {
+            System.out.println("error: " + e.getMessage());
+            return new int[0]; // 
         }
-        
-        
     }
+
     public static void main(String[] args) {
         Encoder encoder = new Encoder();
-        String filePath = "metin.txt"; // Okunacak dosya yolu
+        String pathFile = "metin.txt"; // 
 
-        int[] asciiArr = encoder.StringtoAscii(filePath);
+        int[] alphabeticOrder = encoder.StringToAscii(pathFile);
 
-        for(int num : asciiArr){
-            System.out.println(num+ " ");
-
+        // Sonucu ekrana yazdır
+        System.out.print("Alphabetic Orders: ");
+        for (int num : alphabeticOrder) {
+            System.out.print(num + " ");
         }
-        
     }
-
 }
